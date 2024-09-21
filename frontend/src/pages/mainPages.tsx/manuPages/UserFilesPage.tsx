@@ -1,15 +1,17 @@
-import { Menu } from "antd";
+import { Button, Menu } from "antd";
 import { Content } from "antd/es/layout/layout";
 import styled from "styled-components";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { marked } from "marked";
 import DOMPurify from 'dompurify';
+import { FlexRow } from "../../../components/BaseComponents";
 
 
 export default function UserProfilePage() {
     const [value, setValue] = useState('')
     const [selectedContentKey, setSelectedContentKey] = useState('')
+    const [deleteModelVisible, setDeleteModelVisible] = useState(false)
 
     const manuItems = [
         {
@@ -65,8 +67,8 @@ export default function UserProfilePage() {
         }, 
         {
             key: '2',
-            label: 'markdown'
-        }
+            label: 'Markdown'
+        },
     ]
 
     const getSanitizedHTML = () => {
@@ -86,20 +88,33 @@ export default function UserProfilePage() {
             />
             <Wrapper>
                 <StyledContent>
-                    <StyledMenu 
-                        items={contentMenuItems}
-                        mode="horizontal"
-                        selectedKeys={[selectedContentKey]}
-                        onClick={clickMenuItem}
-                        
-                    />
-                    <StyledTextArea
-                        value={value}
-                        onChange={(e) => setValue(e.target.value)}
-                        autoSize={true}
-                        variant={"borderless"}
-                    />
-                    <div dangerouslySetInnerHTML={{ __html: getSanitizedHTML()}} />
+                    <div style={{display: "flex", justifyContent: "space-between"}}>
+                        <StyledContentMenu 
+                            items={contentMenuItems}
+                            mode="horizontal"
+                            selectedKeys={[selectedContentKey]}
+                            onClick={clickMenuItem}
+                        />
+                        <div >
+                            <Button type="primary" style={{marginRight: 20, marginTop: 10}}>
+                                Сохранить
+                            </Button>
+                            <Button type="primary" danger style={{marginRight: 20}}>
+                                Удалить
+                            </Button>
+                        </div>
+                    </div>
+                    {selectedContentKey === '1' ? 
+                        <StyledTextArea
+                            value={value}
+                            onChange={(e) => setValue(e.target.value)}
+                            autoSize={true}
+                            variant={"borderless"}
+                            placeholder="Пишите..."
+                        /> : 
+                        <MarkdownContainer dangerouslySetInnerHTML={{ __html: getSanitizedHTML()}} />
+                    }
+                    
                 </StyledContent>
             </Wrapper>
         </Container>
@@ -137,4 +152,17 @@ const StyledTextArea = styled(TextArea)`
 const Container = styled.div`
     display: flex;
     flex-direction: row;
+`
+
+
+const StyledContentMenu = styled(Menu)`
+    width: 200px;
+    border: none;
+    border-radius: 20px;
+`
+
+
+const MarkdownContainer = styled.div`
+    padding: 20px 30px;
+
 `
